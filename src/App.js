@@ -1,12 +1,13 @@
 import React from 'react';
 import './App.css';
+import BookList from './Booklist';
 
 const base_url = 'https://www.googleapis.com/books/v1/volumes';
 //const hardcoded_url = `https://www.googleapis.com/books/v1/volumes?q=${title}&key=AIzaSyAQA6SpGBaYgnf_CKDkeErDfdN_4OgmqQ0`;
+const API_KEY = 'AIzaSyAQA6SpGBaYgnf_CKDkeErDfdN_4OgmqQ0';
 
 class App extends React.Component {
   state = {
-    bookSearchTerm: '',
     onlyFreeEbooks: false,
     results: [],
   };
@@ -19,15 +20,24 @@ class App extends React.Component {
     event.target.reset();
 
     console.log(searchVal);
+    fetch(`${base_url}?q=${searchVal}&key=${API_KEY}`)
+
+      .then(res => res.json())
+      .then(responseJSON => {
+        this.setState({
+          results: responseJSON.items
+        })
+      
+      })
 
     this.setState({
       bookSearchTerm: searchVal
-    }, () => console.log(this.state.bookSearchTerm));     
+    }); 
+    
   }
 
-  makeApiRequest = () => {
-
-  }
+  
+ 
 
   render() {
     return (
@@ -45,11 +55,13 @@ class App extends React.Component {
             </form>
           </div>
           <div className='results'>
-            <p>list of books here</p>
+              <BookList 
+                books={this.state.results}
+              />
           </div>
         </main>
       </div>
-    );
+    )
   }
 }
 
